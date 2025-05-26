@@ -64,11 +64,16 @@ export async function scrapeConditionsPage(givenHtml?: string): Promise<{
 
   const tiogaElement = tiogaElements.first();
   // console.log($.html(tiogaElement));
-  const isClosed = tiogaElement.find(':contains("Closed")').length > 0;
-  const isOpen = tiogaElement.find(':contains("Open")').length > 0;
+  const isClosed =
+    tiogaElement.find("*").filter((i, el) => {
+      return $(el).text().trim() === "Closed";
+    }).length > 0;
+  const isOpen =
+    tiogaElement.find("*").filter((i, el) => {
+      return $(el).text().trim() === "Open";
+    }).length > 0;
   if ((!isClosed && !isOpen) || (isClosed && isOpen)) {
     throw new Error("Could not determine if Tioga is open or closed");
   }
-  // console.log("result", isOpen);
   return { foundHtml: $.html(tiogaElement), isOpen };
 }
